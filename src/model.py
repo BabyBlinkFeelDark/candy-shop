@@ -1,4 +1,5 @@
 import json
+from typing import List, Dict
 
 
 class Product:
@@ -19,7 +20,7 @@ class Product:
     price: float
     quantity: int
 
-    def __init__(self, name, description, price, quantity):
+    def __init__(self, name, description, price, quantity) -> None:
         """
         Инициализирует объект продукта с указанными параметрами.
 
@@ -71,7 +72,7 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
-    def parser_json(self, file_path: str):
+    def parser_json(self, file_path: str) -> List[Dict]:
         """
         Парсит JSON-файл по указанному пути и возвращает данные в виде списка словарей.
 
