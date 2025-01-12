@@ -3,13 +3,13 @@ from io import StringIO
 
 import pytest
 
-from src.model import Employee, Category
+from src.model import Product, Category
 from unittest.mock import Mock, patch
 
 
 @pytest.fixture
 def employee_coffe():
-    return Employee('coffe', 'just a coffe', 300.0,10)
+    return Product('coffe', 'just a coffe', 300.0, 10)
 
 @pytest.fixture
 def category_coffe():
@@ -25,8 +25,8 @@ def test_init_count(category_coffe):
     assert category_coffe.name == 'coffe'
     assert category_coffe.description == 'just a coffe'
     assert category_coffe.products == ["coffe"]
-    assert category_coffe.total_categories == 1
-    assert category_coffe.total_products == 1
+    assert category_coffe.category_count == 1
+    assert category_coffe.product_count == 1
 
 def test_parser_json_valid_data():
     json_data = [
