@@ -48,5 +48,6 @@ class Category:  # Название класса
                     self.name = item["name"]
                     self.description = item['description']
                     self.products = item['products']
+                return data
         except (FileNotFoundError, json.JSONDecodeError):
             return []
