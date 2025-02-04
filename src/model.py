@@ -1,7 +1,7 @@
 import json
 from bisect import insort
 from itertools import product
-from typing import List, Dict
+from typing import List, Dict, Any
 
 
 class Product:
@@ -38,10 +38,11 @@ class Product:
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, prod: Dict[str]):
+    def new_product(cls, prod: Dict[str, Any]) -> "Product":
         if {"name", "description", "price", "quantity"}.issubset(prod):
             return cls(**prod)
-        
+        else:
+            raise ValueError("Отсутствуют обязательные ключи")
 
 class Category:
     """
@@ -103,17 +104,31 @@ class Category:
         except (FileNotFoundError, json.JSONDecodeError):
             return []
 
-    def add_product(self, prod):
-        """Добавляет продукт в категорию"""
-        if isinstance(prod, Product):
-            self.__products.append(prod)
-            Category.product_count += 1
-        else:
+    def add_product(self, prod: "Product") -> None:
+        """
+        Добавляет продукт в категорию.
+
+        Args:
+            prod (Product): Объект продукта для добавления.
+
+        Raises:
+            TypeError: Если переданный аргумент не является экземпляром Product.
+        """
+        if not isinstance(prod, Product):
             raise TypeError("Можно добавлять только объекты класса Product")
+        self.__products.append(prod)
+        Category.product_count += 1
 
     @property
-    def products(self):
-        """Геттер для получения списка товаров в читаемом формате"""
+    def products(self) -> str:
+        """
+        Геттер для получения списка товаров в читаемом формате.
+
+        Returns:
+            str: Строка, содержащая описание каждого продукта в формате:
+                 "Название продукта, цена руб. Остаток: количество шт."
+                 Если список пуст, возвращает сообщение об отсутствии товаров.
+        """
         if not self.__products:
             return "В категории нет товаров."
         return "\n".join(
