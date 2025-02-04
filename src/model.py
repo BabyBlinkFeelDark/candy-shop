@@ -1,7 +1,7 @@
 import json
 from bisect import insort
 from itertools import product
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
 class Product:
@@ -38,11 +38,26 @@ class Product:
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, prod: Dict[str, Any]) -> "Product":
-        if {"name", "description", "price", "quantity"}.issubset(prod):
-            return cls(**prod)
-        else:
+    def new_product(
+            cls,
+            prod: Dict[str, Any],
+            existing_products: Optional[List["Product"]] = None
+    ) -> "Product":
+        required_keys = {"name", "description", "price", "quantity"}
+        if not required_keys.issubset(prod.keys()):
             raise ValueError("Отсутствуют обязательные ключи")
+
+        if existing_products is not None:
+            for p in existing_products:
+                if p.name == prod["name"]:
+                    p.quantity += prod["quantity"]
+                    p.price = max(p.price, prod["price"])
+                    return p
+
+        new_prod = cls(**prod)
+        if existing_products is not None:
+            existing_products.append(new_prod)
+        return new_prod
 
 class Category:
     """
