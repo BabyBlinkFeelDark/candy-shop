@@ -37,6 +37,11 @@ class Product:
         self.price = price
         self.quantity = quantity
 
+    @classmethod
+    def new_product(cls, prod: Dict[str]):
+        if {"name", "description", "price", "quantity"}.issubset(prod):
+            return cls(**prod)
+        
 
 class Category:
     """
@@ -97,6 +102,14 @@ class Category:
                 return data
         except (FileNotFoundError, json.JSONDecodeError):
             return []
+
+    def add_product(self, prod):
+        """Добавляет продукт в категорию"""
+        if isinstance(prod, Product):
+            self.__products.append(prod)
+            Category.product_count += 1
+        else:
+            raise TypeError("Можно добавлять только объекты класса Product")
 
     @property
     def products(self):
