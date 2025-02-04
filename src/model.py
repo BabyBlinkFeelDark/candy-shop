@@ -34,8 +34,38 @@ class Product:
         """
         self.name = name
         self.description = description
-        self.price = price
-        self.quantity = quantity
+        self._price: float = price
+        self._quantity: int = quantity
+
+    @property
+    def price(self) -> float:
+        """Возвращает цену продукта."""
+        return self._price
+
+    @price.setter
+    def price(self, value: float) -> None:
+        """
+        Устанавливает цену продукта, если значение не меньше 0.
+        При попытке установить отрицательное значение выводится предупреждение.
+        """
+        if value <= 0:
+            return
+        self._price = value
+
+    @property
+    def quantity(self) -> int:
+        """Возвращает количество продукта."""
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, value: int) -> None:
+        """
+        Устанавливает количество продукта, если значение не меньше 0.
+        При попытке установить отрицательное значение выводится предупреждение.
+        """
+        if value < 0:
+            return
+        self._quantity = value
 
     @classmethod
     def new_product(
