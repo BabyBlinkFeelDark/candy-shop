@@ -1,4 +1,6 @@
 import json
+from bisect import insort
+from itertools import product
 from typing import List, Dict
 
 
@@ -66,9 +68,9 @@ class Category:
             description (str): Описание категории.
             products (list): Список товаров в категории.
         """
-        self.name = name
-        self.description = description
-        self.products = products
+        self.__name = name
+        self.__description = description
+        self.__products = products
         Category.category_count += 1
         Category.product_count += len(products)
 
@@ -89,9 +91,19 @@ class Category:
                 if not isinstance(data, list):
                     return []
                 for item in data:
-                    self.name = item["name"]
-                    self.description = item['description']
-                    self.products = item['products']
+                    self.__name = item["name"]
+                    self.__description = item['description']
+                    self.__products = item['products']
                 return data
         except (FileNotFoundError, json.JSONDecodeError):
             return []
+
+    @property
+    def products(self):
+        """Геттер для получения списка товаров в читаемом формате"""
+        if not self.__products:
+            return "В категории нет товаров."
+        return "\n".join(
+            f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт."
+            for p in self.__products
+        )
