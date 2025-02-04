@@ -1,5 +1,6 @@
 # Candy-shop
 
+
 Этот проект включает два класса: Product и Category, которые позволяют управлять товарами и их категориями. Также предусмотрен метод для парсинга JSON-файлов с данными о категориях и товарах, а также дополнительные возможности для работы с продуктами и категориями.
 
 ## Описание классов
@@ -50,11 +51,14 @@
 
 ### 1. Создание экземпляра класса Product
 
+
 ```python
 product = Product(name="Product1", description="Description of Product1", price=19.99, quantity=100)
 ```
 
-### 2. Создание экземпляра класса Category
+
+### 2. Создание экземпляра класса `Category`
+
 
 ```python
 category = Category(name="Category1", description="Description of Category1", products=[product])
@@ -62,7 +66,9 @@ category = Category(name="Category1", description="Description of Category1", pr
 
 ### 3. Парсинг JSON-файла
 
+
 Для того чтобы заполнить данные о категории и продуктах из JSON-файла, используйте метод parser_json. Он читает файл по указанному пути и обновляет атрибуты объекта.
+
 
 Пример использования:
 
@@ -77,6 +83,7 @@ category_data = category.parser_json("path/to/categories.json")
 new_product = Product(name="New Product", description="New Product Description", price=29.99, quantity=50)
 category.add_product(new_product)
 ```
+
 
 ### Пример JSON:
 
@@ -97,9 +104,11 @@ category.add_product(new_product)
 ]
 ```
 
+
 ## Установка
 
 Для работы с проектом необходимо иметь установленный Python 3.x. Если требуется установить зависимости, воспользуйтесь менеджером пакетов poetry.
+
 
 Клонируйте репозиторий:
 
@@ -122,3 +131,4 @@ pip install -r requirements.txt
 ## Лицензия
 
 Этот проект лицензирован под MIT License. Подробнее смотрите в файле [LICENSE]().
+
