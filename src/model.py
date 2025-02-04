@@ -1,6 +1,4 @@
 import json
-from bisect import insort
-from itertools import product
 from typing import Any, Dict, List, Optional
 
 
@@ -70,7 +68,8 @@ class Product:
         self._quantity = value
 
     @classmethod
-    def new_product(cls, prod: Dict[str, Any], existing_products: Optional[List["Product"]] = None) -> Optional["Product"]:
+    def new_product(cls, prod: Dict[str, Any], existing_products: Optional[List["Product"]] = None)\
+            -> Optional["Product"]:
         """
         Создает новый продукт из словаря параметров.
 
