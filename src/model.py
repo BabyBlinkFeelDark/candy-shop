@@ -43,9 +43,26 @@ class Product:
             prod: Dict[str, Any],
             existing_products: Optional[List["Product"]] = None
     ) -> "Product":
+        """
+        Создает новый продукт из словаря параметров.
+
+        Args:
+        prod (Dict[str, Any]): Словарь с параметрами продукта.
+        Обязательные ключи: "name", "description", "price", "quantity".
+        existing_products (Optional[List[Product]]): Список существующих продуктов для проверки дубликатов.
+
+        Returns:
+        Optional[Product]: Созданный или обновленный объект продукта, или None, если валидация не прошла.
+
+        Raises:
+        ValueError: Если отсутствуют обязательные ключи в словаре.
+        """
         required_keys = {"name", "description", "price", "quantity"}
         if not required_keys.issubset(prod.keys()):
             raise ValueError("Отсутствуют обязательные ключи")
+
+        if prod["price"] < 0 or prod["quantity"] < 0:
+            return None
 
         if existing_products is not None:
             for p in existing_products:
@@ -53,7 +70,6 @@ class Product:
                     p.quantity += prod["quantity"]
                     p.price = max(p.price, prod["price"])
                     return p
-
         new_prod = cls(**prod)
         if existing_products is not None:
             existing_products.append(new_prod)
