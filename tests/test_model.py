@@ -1,10 +1,10 @@
 import json
 from io import StringIO
-
-import pytest
 from unittest.mock import patch
 
-from src.model import Product, Category
+import pytest
+
+from src.model import Category, Product
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def test_init_count(category_coffee):
 def test_parser_json_valid_data():
     json_data = [
         {"name": "Category1", "description": "Description1", "products": ["prod1", "prod2"]},
-        {"name": "Category2", "description": "Description2", "products": ["prod3"]}
+        {"name": "Category2", "description": "Description2", "products": ["prod3"]},
     ]
     with patch("builtins.open", return_value=StringIO(json.dumps(json_data))):
         category = Category("", "", [])
@@ -86,12 +86,7 @@ def test_price_decrease_confirmation_decline(product_coffee, monkeypatch, capsys
 def test_new_product_validation():
     with pytest.raises(ValueError):
         Product.new_product({"name": "test", "description": "desc", "price": 100.0})
-    result = Product.new_product({
-        "name": "test",
-        "description": "desc",
-        "price": -100.0,
-        "quantity": 10
-    })
+    result = Product.new_product({"name": "test", "description": "desc", "price": -100.0, "quantity": 10})
     assert result is None
 
 

@@ -1,7 +1,7 @@
 import json
 from bisect import insort
 from itertools import product
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 class Product:
@@ -11,18 +11,11 @@ class Product:
     Атрибуты:
         name (str): Название продукта.
         description (str): Описание продукта.
-        price (float): Цена продукта.
-        quantity (int): Количество товара в наличии.
-
-    Методы:
-        __init__: Инициализирует объект продукта с заданными значениями.
+        _price (float): Цена продукта (хранится во внутреннем атрибуте).
+        _quantity (int): Количество товара в наличии (хранится во внутреннем атрибуте).
     """
-    name: str
-    description: str
-    price: float
-    quantity: int
 
-    def __init__(self, name, description, price, quantity) -> None:
+    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
         """
         Инициализирует объект продукта с указанными параметрами.
 
@@ -32,8 +25,8 @@ class Product:
             price (float): Цена продукта.
             quantity (int): Количество продукта в наличии.
         """
-        self.name = name
-        self.description = description
+        self.name: str = name
+        self.description: str = description
         self._price: float = price
         self._quantity: int = quantity
 
@@ -54,7 +47,7 @@ class Product:
 
         if value < self._price:
             answer = input(f"Вы уверены, что хотите понизить цену с {self._price} до {value}? (y/n): ")
-            if answer.lower() != 'y':
+            if answer.lower() != "y":
                 print("Изменение цены отменено.")
                 return
 
@@ -72,17 +65,12 @@ class Product:
         При попытке установить отрицательное значение выводится предупреждение.
         """
         if value < 0:
-            print(
-                f"Количество не может быть меньше 0. Попытка установить {value}).")
+            print(f"Количество не может быть меньше 0. Попытка установить {value}).")
             return
         self._quantity = value
 
     @classmethod
-    def new_product(
-            cls,
-            prod: Dict[str, Any],
-            existing_products: Optional[List["Product"]] = None
-    ) -> "Product":
+    def new_product(cls, prod: Dict[str, Any], existing_products: Optional[List["Product"]] = None) -> Optional["Product"]:
         """
         Создает новый продукт из словаря параметров.
 
@@ -115,43 +103,37 @@ class Product:
             existing_products.append(new_prod)
         return new_prod
 
+
 class Category:
     """
     Класс для представления категории товаров.
 
     Атрибуты:
-        name (str): Название категории.
-        description (str): Описание категории.
-        products (list): Список товаров, относящихся к категории.
-        total_categories (int): Общее количество созданных категорий.
-        total_products (int): Общее количество товаров во всех категориях.
-
-    Методы:
-        __init__: Инициализирует объект категории.
-        parser_json: Парсит JSON-файл и обновляет атрибуты объекта с данными.
+        __name (str): Название категории.
+        __description (str): Описание категории.
+        __products (List[Any]): Приватный список товаров.
+        category_count (int): Общее количество созданных категорий.
+        product_count (int): Общее количество товаров во всех категориях.
     """
-    name: str
-    description: str
-    products: list
     category_count: int = 0
     product_count: int = 0
 
-    def __init__(self, name, description, products):
+    def __init__(self, name: str, description: str, products: List[Any]) -> None:
         """
         Инициализирует объект категории с заданными значениями.
 
         Args:
             name (str): Название категории.
             description (str): Описание категории.
-            products (list): Список товаров в категории.
+            products (List[Any]): Список товаров в категории.
         """
-        self.__name = name
-        self.__description = description
-        self.__products = products
+        self.__name: str = name
+        self.__description: str = description
+        self.__products: List[Any] = products
         Category.category_count += 1
         Category.product_count += len(products)
 
-    def parser_json(self, file_path: str) -> List[Dict]:
+    def parser_json(self, file_path: str) -> List[Dict[str, Any]]:
         """
         Парсит JSON-файл по указанному пути и возвращает данные в виде списка словарей.
 
@@ -169,13 +151,13 @@ class Category:
                     return []
                 for item in data:
                     self.__name = item["name"]
-                    self.__description = item['description']
-                    self.__products = item['products']
+                    self.__description = item["description"]
+                    self.__products = item["products"]
                 return data
         except (FileNotFoundError, json.JSONDecodeError):
             return []
 
-    def add_product(self, prod: "Product") -> None:
+    def add_product(self, prod: Product) -> None:
         """
         Добавляет продукт в категорию.
 
