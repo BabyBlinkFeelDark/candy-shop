@@ -195,14 +195,19 @@ class Category:
         """
         Геттер для получения списка товаров в читаемом формате.
 
+        Если элемент списка является экземпляром Product, используется формат:
+            "Название продукта, цена руб. Остаток: количество шт."
+        Иначе просто выводится строковое представление элемента.
+
         Returns:
-            str: Строка, содержащая описание каждого продукта в формате:
-                 "Название продукта, цена руб. Остаток: количество шт."
-                 Если список пуст, возвращает сообщение об отсутствии товаров.
+            str: Строка с описанием каждого продукта или сообщение об отсутствии товаров.
         """
         if not self.__products:
             return "В категории нет товаров."
-        return "\n".join(
-            f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт."
-            for p in self.__products
-        )
+        formatted = []
+        for p in self.__products:
+            if hasattr(p, "name") and hasattr(p, "price") and hasattr(p, "quantity"):
+                formatted.append(f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт.")
+            else:
+                formatted.append(str(p))
+        return "\n".join(formatted)
