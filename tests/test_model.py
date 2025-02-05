@@ -99,3 +99,35 @@ def test_new_product_duplicate():
     assert p1 is p2
     assert p1.quantity == 8
     assert p1.price == 120.0
+
+
+def test_str_method():
+    p = Product("TestProd", "Test Desc", 100.0, 10)
+    expected = "TestProd, 100.00 руб. Остаток: 10 шт."
+    assert str(p) == expected
+
+
+def test_add_method():
+    p1 = Product("Prod1", "Desc", 100.0, 10)
+    p2 = Product("Prod2", "Desc", 200.0, 5)
+    total_value = p1 + p2
+    assert total_value == 2000
+
+
+def test_category_iterator():
+    p1 = Product("Prod1", "Desc", 100.0, 10)
+    p2 = Product("Prod2", "Desc", 200.0, 5)
+    category = Category("TestCat", "Category Desc", [p1, p2])
+    iterated_products = [prod for prod in category]
+    assert iterated_products == [p1, p2]
+
+
+def test_existing_product_update():
+    products_list = []
+    prod_data1 = {"name": "TestProd", "description": "Desc", "price": 100.0, "quantity": 5}
+    prod_data2 = {"name": "TestProd", "description": "Desc", "price": 120.0, "quantity": 3}
+    p1 = Product.new_product(prod_data1, products_list)
+    p2 = Product.new_product(prod_data2, products_list)
+    assert p1 is p2
+    assert p1.quantity == 8
+    assert p1.price == 120.0
