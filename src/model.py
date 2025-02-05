@@ -31,6 +31,13 @@ class Product:
     def __str__(self):
         return f'{self.name}, {self._price} руб. Остаток: {self._quantity} шт.'
 
+    def __add__(self, other):
+        """
+        Метод срабатывает, когда используется оператор сложения.
+        В параметре other хранится то, что справа от знака +
+        """
+        return self._price * self._quantity + other._price * self._quantity
+
     @property
     def price(self) -> float:
         """Возвращает цену продукта."""
