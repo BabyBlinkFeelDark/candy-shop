@@ -238,7 +238,6 @@ class CategoryIterator:
     """
 
     def __init__(self, category: Category) -> None:
-        # Получаем приватный список товаров через манглинг
         self._products = category._Category__products
         self._index = 0
 
