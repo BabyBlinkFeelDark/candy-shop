@@ -131,5 +131,3 @@ def test_existing_product_update():
     assert p1 is p2
     assert p1.quantity == 8
     assert p1.price == 120.0
-
-

@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Iterator, cast
 
 
 class Product:
@@ -98,9 +98,7 @@ class Product:
 
     @classmethod
     def new_product(
-            cls,
-            prod: Dict[str, Any],
-            existing_products: Optional[List["Product"]] = None
+        cls, prod: Dict[str, Any], existing_products: Optional[List["Product"]] = None
     ) -> Optional["Product"]:
         """
         Создает новый продукт из словаря параметров.
@@ -146,6 +144,7 @@ class Category:
         category_count (int): Общее количество созданных категорий.
         product_count (int): Общее количество товаров во всех категориях.
     """
+
     category_count: int = 0
     product_count: int = 0
 
@@ -225,7 +224,7 @@ class Category:
                 formatted.append(str(p))
         return "\n".join(formatted)
 
-    def __iter__(self):
+    def __iter__(self) -> "CategoryIterator":
         """Возвращает итератор для перебора товаров категории."""
         return CategoryIterator(self)
 
@@ -238,10 +237,10 @@ class CategoryIterator:
     """
 
     def __init__(self, category: Category) -> None:
-        self._products = category._Category__products
-        self._index = 0
+        self._products: List[Any] = cast(List[Any], getattr(category, "_Category__products"))
+        self._index: int = 0
 
-    def __iter__(self):
+    def __iter__(self) -> "CategoryIterator":
         return self
 
     def __next__(self) -> Any:
