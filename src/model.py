@@ -28,15 +28,26 @@ class Product:
         self._price: float = price
         self._quantity: int = quantity
 
-    def __str__(self):
-        return f'{self.name}, {self._price} руб. Остаток: {self._quantity} шт.'
+    def __str__(self) -> str:
+        """
+        Возвращает строковое представление продукта.
 
-    def __add__(self, other):
+        Выводится в формате:
+            "Название продукта, цена руб. Остаток: количество шт."
+        (без двоеточия после названия)
         """
-        Метод срабатывает, когда используется оператор сложения.
-        В параметре other хранится то, что справа от знака +
+        return f"{self.name}, {self._price:.2f} руб. Остаток: {self._quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
         """
-        return self._price * self._quantity + other._price * self._quantity
+        Реализует оператор сложения для продуктов.
+
+        Возвращает суммарную стоимость товаров (цена * количество) для обоих продуктов.
+        Если other не является объектом Product, выбрасывается TypeError.
+        """
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+        return (self._price * self._quantity) + (other._price * other._quantity)
 
     @property
     def price(self) -> float:
@@ -48,6 +59,11 @@ class Product:
         """
         Устанавливает цену продукта, если значение положительное.
 
+        Если новая цена ниже текущей, запрашивает подтверждение у пользователя.
+        При попытке установить нулевую или отрицательную цену выводится предупреждение.
+
+        Args:
+            value (float): Новая цена.
         """
         if value <= 0:
             print(f"Цена не должна быть нулевой или отрицательной (попытка установить {value}).")
@@ -71,6 +87,9 @@ class Product:
         """
         Устанавливает количество продукта, если значение не меньше 0.
         При попытке установить отрицательное значение выводится предупреждение.
+
+        Args:
+            value (int): Новое количество.
         """
         if value < 0:
             print(f"Количество не может быть меньше 0. Попытка установить {value}).")
@@ -78,21 +97,24 @@ class Product:
         self._quantity = value
 
     @classmethod
-    def new_product(cls, prod: Dict[str, Any], existing_products: Optional[List["Product"]] = None)\
-            -> Optional["Product"]:
+    def new_product(
+            cls,
+            prod: Dict[str, Any],
+            existing_products: Optional[List["Product"]] = None
+    ) -> Optional["Product"]:
         """
         Создает новый продукт из словаря параметров.
 
         Args:
-        prod (Dict[str, Any]): Словарь с параметрами продукта.
-        Обязательные ключи: "name", "description", "price", "quantity".
-        existing_products (Optional[List[Product]]): Список существующих продуктов для проверки дубликатов.
+            prod (Dict[str, Any]): Словарь с параметрами продукта.
+                Обязательные ключи: "name", "description", "price", "quantity".
+            existing_products (Optional[List[Product]]): Список существующих продуктов для проверки дубликатов.
 
         Returns:
-        Optional[Product]: Созданный или обновленный объект продукта, или None, если валидация не прошла.
+            Optional[Product]: Созданный или обновленный объект продукта, или None, если валидация не прошла.
 
         Raises:
-        ValueError: Если отсутствуют обязательные ключи в словаре.
+            ValueError: Если отсутствуют обязательные ключи в словаре.
         """
         required_keys = {"name", "description", "price", "quantity"}
         if not required_keys.issubset(prod.keys()):
@@ -150,8 +172,8 @@ class Category:
             file_path (str): Путь к JSON-файлу.
 
         Returns:
-            list[dict]: Список транзакций, если данные корректны. Пустой список, если файл отсутствует
-                        или данные не являются списком.
+            List[Dict[str, Any]]: Список транзакций, если данные корректны.
+                                  Пустой список, если файл отсутствует или данные не являются списком.
         """
         try:
             with open(file_path, "r") as f:
@@ -188,7 +210,7 @@ class Category:
 
         Если элемент списка является экземпляром Product, используется формат:
             "Название продукта, цена руб. Остаток: количество шт."
-        Иначе просто выводится строковое представление элемента.
+        Иначе выводится строковое представление элемента.
 
         Returns:
             str: Строка с описанием каждого продукта или сообщение об отсутствии товаров.
@@ -202,3 +224,30 @@ class Category:
             else:
                 formatted.append(str(p))
         return "\n".join(formatted)
+
+    def __iter__(self):
+        """Возвращает итератор для перебора товаров категории."""
+        return CategoryIterator(self)
+
+
+class CategoryIterator:
+    """
+    Вспомогательный класс для итерации по товарам категории.
+
+    Принимает объект класса Category и позволяет перебирать товары в цикле for.
+    """
+
+    def __init__(self, category: Category) -> None:
+        # Получаем приватный список товаров через манглинг
+        self._products = category._Category__products
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Any:
+        if self._index >= len(self._products):
+            raise StopIteration
+        result = self._products[self._index]
+        self._index += 1
+        return result
