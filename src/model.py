@@ -43,10 +43,13 @@ class Product:
         Реализует оператор сложения для продуктов.
 
         Возвращает суммарную стоимость товаров (цена * количество) для обоих продуктов.
-        Если other не является объектом Product, выбрасывается TypeError.
+        Если other не является объектом Product или объекты относятся к разным классам,
+        выбрасывается TypeError.
         """
         if not isinstance(other, Product):
             raise TypeError("Можно складывать только объекты класса Product")
+        if type(self) != type(other):
+            raise TypeError("Можно складывать только объекты одного класса")
         return (self._price * self._quantity) + (other._price * other._quantity)
 
     @property
@@ -133,6 +136,44 @@ class Product:
         return new_prod
 
 
+class Smartphone(Product):
+    """
+    Класс для представления смартфона.
+
+    Помимо свойств Product, имеет:
+        efficiency (float): Производительность.
+        model (str): Модель смартфона.
+        memory (int): Объем встроенной памяти.
+        color (str): Цвет смартфона.
+    """
+
+    def __init__(self, name: str, description: str, price: float, quantity: int,
+                 efficiency: float, model: str, memory: int, color: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.efficiency: float = efficiency
+        self.model: str = model
+        self.memory: int = memory
+        self.color: str = color
+
+
+class LawnGrass(Product):
+    """
+    Класс для представления газонной травы.
+
+    Помимо свойств Product, имеет:
+        country (str): Страна-производитель.
+        germination_period (str): Срок прорастания.
+        color (str): Цвет травы.
+    """
+
+    def __init__(self, name: str, description: str, price: float, quantity: int,
+                 country: str, germination_period: str, color: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.country: str = country
+        self.germination_period: str = germination_period
+        self.color: str = color
+
+
 class Category:
     """
     Класс для представления категории товаров.
@@ -195,7 +236,7 @@ class Category:
             prod (Product): Объект продукта для добавления.
 
         Raises:
-            TypeError: Если переданный аргумент не является экземпляром Product.
+            TypeError: Если переданный аргумент не является экземпляром Product или его наследником.
         """
         if not isinstance(prod, Product):
             raise TypeError("Можно добавлять только объекты класса Product")

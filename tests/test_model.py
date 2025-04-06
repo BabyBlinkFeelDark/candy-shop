@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.model import Category, Product
+from src.model import Category, Product, Smartphone, LawnGrass
 
 
 @pytest.fixture
@@ -44,6 +44,7 @@ def test_parser_json_valid_data():
         result = category.parser_json("fake_path.json")
         assert category._Category__name == "Category2"
         assert category._Category__description == "Description2"
+        # В данном случае products хранится как список, поэтому для теста преобразуем его в строку.
         assert category.products == "prod3"
         assert result == json_data
 
@@ -131,3 +132,55 @@ def test_existing_product_update():
     assert p1 is p2
     assert p1.quantity == 8
     assert p1.price == 120.0
+
+
+# Новые тесты для функциональности новых классов и ограничений оператора сложения
+
+def test_smartphone_attributes():
+    s = Smartphone("Samsung Galaxy S23", "High-end smartphone", 150000.0, 5, 95.5, "S23", 256, "Black")
+    assert s.efficiency == 95.5
+    assert s.model == "S23"
+    assert s.memory == 256
+    assert s.color == "Black"
+    # Проверяем, что унаследованы свойства Product
+    assert s.name == "Samsung Galaxy S23"
+    assert s.price == 150000.0
+
+
+def test_lawn_grass_attributes():
+    g = LawnGrass("Газонная трава", "Элитная трава", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    assert g.country == "Россия"
+    assert g.germination_period == "7 дней"
+    assert g.color == "Зеленый"
+    # Проверяем, что унаследованы свойства Product
+    assert g.name == "Газонная трава"
+    assert g.price == 500.0
+
+
+def test_addition_same_class():
+    s1 = Smartphone("Smartphone A", "Desc", 100000.0, 2, 90.0, "A1", 128, "Blue")
+    s2 = Smartphone("Smartphone B", "Desc", 150000.0, 3, 92.0, "B1", 256, "Red")
+    total = s1 + s2
+    # (100000 * 2) + (150000 * 3) = 200000 + 450000 = 650000
+    assert total == 650000
+
+
+def test_addition_different_class():
+    s = Smartphone("Smartphone A", "Desc", 100000.0, 2, 90.0, "A1", 128, "Blue")
+    g = LawnGrass("Газонная трава", "Desc", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    with pytest.raises(TypeError):
+        _ = s + g
+
+
+def test_category_add_valid_product(category_coffee):
+    # Создаём объект Smartphone, который является наследником Product
+    s = Smartphone("Samsung", "Desc", 100000.0, 2, 90.0, "S1", 128, "Black")
+    # Добавляем в категорию
+    category_coffee.add_product(s)
+    # Проверяем, что в списке продуктов присутствует добавленный продукт
+    assert "Samsung" in category_coffee.products
+
+
+def test_category_add_invalid_product(category_coffee):
+    with pytest.raises(TypeError):
+        category_coffee.add_product("Not a product")
